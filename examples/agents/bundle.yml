@@ -1,0 +1,40 @@
+# Cord agents bundle 示例
+#
+# 用 `cord agents bundle ./bundle.yml` 一行起所有 agent。
+# 跨机分配靠 `host` 字段（默认本机）—— 跨机要 SSH 配置好。
+
+# 全局默认（每个 agent 可覆盖）
+defaults:
+  sandbox: danger-full-access
+  reasoning: low
+
+# agent 列表
+agents:
+  # 4 个 SWE 角色（标准开发工作流）
+  - file: ./swe-architect.md
+    enabled: true
+
+  - file: ./swe-coder.md
+    enabled: true
+
+  - file: ./swe-reviewer.md
+    enabled: true
+
+  - file: ./swe-pm.md
+    enabled: true
+
+  # 3 个通用角色
+  - file: ./translator.md
+    enabled: true
+
+  - file: ./data-analyst.md
+    enabled: false   # 默认不启，按需打开
+
+  - file: ./devops.md
+    enabled: false
+
+  # 跨机示例（注释掉，需要 SSH 配 + 远端装好 cord）
+  # - file: ./hermes-bootstrap.md
+  #   enabled: false
+  #   host: fosen@222.187.130.67  # ssh 起远端 cord serve
+  #   port: 1001

@@ -1,0 +1,9 @@
+node_modules/
+*.tgz
+.DS_Store
+
+# downloaded by postinstall — never commit; goes to GitHub Releases
+npm/cord-darwin-arm64/cord
+npm/cord-darwin-x64/cord
+npm/cord-linux-x64/cord
+npm/cord-linux-arm64/cord
