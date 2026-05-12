@@ -1,0 +1,22 @@
+{
+  "name": "@fosenai/cord-windows-x64",
+  "version": "0.1.0-alpha.3",
+  "description": "Cord — windows-x64 prebuilt binary (downloaded from GitHub Releases on install).",
+  "license": "Apache-2.0",
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/download.js"
+  },
+  "files": [
+    "scripts/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fosenai/cord.git"
+  }
+}
