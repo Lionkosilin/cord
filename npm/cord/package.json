@@ -1,0 +1,67 @@
+{
+  "name": "@fosenai/cord",
+  "version": "0.1.0-alpha.2",
+  "description": "Cord — decentralized P2P agent network for LLMs, MCP servers and AI agents. Wrap any LLM CLI / HTTP backend / MCP server into a peer-to-peer capability and discover it across machines via natural-language semantic search.",
+  "license": "Apache-2.0",
+  "bin": {
+    "cord": "bin/cord.js"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "README.md"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  },
+  "optionalDependencies": {
+    "@fosenai/cord-darwin-arm64": "0.1.0-alpha.2",
+    "@fosenai/cord-darwin-x64": "0.1.0-alpha.2",
+    "@fosenai/cord-linux-x64": "0.1.0-alpha.2",
+    "@fosenai/cord-linux-arm64": "0.1.0-alpha.2",
+    "@fosenai/cord-windows-x64": "0.1.0-alpha.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fosenai/cord.git"
+  },
+  "homepage": "https://github.com/fosenai/cord",
+  "bugs": {
+    "url": "https://github.com/fosenai/cord/issues"
+  },
+  "keywords": [
+    "cord",
+    "p2p",
+    "peer-to-peer",
+    "p2p-network",
+    "agent",
+    "ai-agent",
+    "ai-agents",
+    "agent-network",
+    "agent-mesh",
+    "agent-discovery",
+    "agent-orchestration",
+    "decentralized",
+    "decentralized-ai",
+    "federation",
+    "semantic-search",
+    "mcp",
+    "mcp-server",
+    "mcp-client",
+    "model-context-protocol",
+    "llm",
+    "llm-agent",
+    "llm-cli",
+    "claude",
+    "claude-code",
+    "codex",
+    "ollama",
+    "anthropic",
+    "openai",
+    "cli",
+    "rust"
+  ]
+}

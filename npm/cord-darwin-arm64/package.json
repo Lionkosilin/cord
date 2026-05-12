@@ -1,0 +1,22 @@
+{
+  "name": "@fosenai/cord-darwin-arm64",
+  "version": "0.1.0-alpha.2",
+  "description": "Cord — darwin-arm64 prebuilt binary (downloaded from GitHub Releases on install).",
+  "license": "Apache-2.0",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/download.js"
+  },
+  "files": [
+    "scripts/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fosenai/cord.git"
+  }
+}
