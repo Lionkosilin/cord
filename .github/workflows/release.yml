@@ -108,3 +108,59 @@ jobs:
           files: ${{ steps.locate.outputs.asset }}
           fail_on_unmatched_files: true
           generate_release_notes: true
+
+  publish-npm:
+    name: publish to npm
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Compute version from tag
+        id: ver
+        run: |
+          VER="${{ github.event.inputs.tag || github.ref_name }}"
+          VER="${VER#v}"
+          echo "version=$VER" >> $GITHUB_OUTPUT
+          echo "publishing as version $VER"
+
+      - name: Bump version in all 6 npm packages
+        env:
+          VER: ${{ steps.ver.outputs.version }}
+        run: |
+          for pkg in cord cord-darwin-arm64 cord-darwin-x64 cord-linux-arm64 cord-linux-x64 cord-windows-x64; do
+            node -e "
+              const fs = require('fs');
+              const p = 'npm/$pkg/package.json';
+              const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+              j.version = process.env.VER;
+              if (j.optionalDependencies) {
+                for (const k of Object.keys(j.optionalDependencies)) {
+                  j.optionalDependencies[k] = process.env.VER;
+                }
+              }
+              fs.writeFileSync(p, JSON.stringify(j, null, 2) + '\n');
+              console.log('  ' + p + ' -> ' + j.version);
+            "
+          done
+
+      - name: Publish 5 platform packages first
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          for pkg in cord-darwin-arm64 cord-darwin-x64 cord-linux-arm64 cord-linux-x64 cord-windows-x64; do
+            echo "=== publishing @fosenai/$pkg ==="
+            (cd npm/$pkg && npm publish --access public)
+          done
+
+      - name: Publish main @fosenai/cord last
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # main pkg depends on platform pkgs via optionalDependencies — publish last so deps resolve
+          (cd npm/cord && npm publish --access public)
