@@ -470,6 +470,9 @@ cord call --query "translate to english" --input '{"data":"hola"}'
 # call a specific peer + capability
 cord call --peer-id <PEER_ID> --cap translator --input '{"data":"hola"}'
 
+# jump into an interactive sticky chat with a known peer + capability
+cord link <PEER_ID> translator
+
 # multi-turn with sticky session id
 cord call --query "writing assistant" --input '{"topic":"agents"}' \
           --session-id my-draft
@@ -510,7 +513,8 @@ cord stop               # shut down the daemon
 | `cord openclaw-bridge` | Wrap an OpenClaw main agent as a capability |
 | `cord find` | Semantic search across the mesh |
 | `cord call` | Invoke a remote capability (`--peer-id` + `--cap`, or `--query`) |
-| `cord chat` | Interactive REPL — sticky / route / broadcast / roundtable modes |
+| `cord link <peer-id> <cap-id>` | Jump straight into sticky chat with a known peer/cap |
+| `cord chat` | Terminal chat page with cap roster, current cap, sticky / broadcast / roundtable modes |
 | `cord describe <cap-id>` | Pull a cap descriptor (input/output schema, examples) |
 | `cord capabilities` | List locally registered caps + per-cap call stats |
 | `cord sessions` | Active multi-turn sessions |

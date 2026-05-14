@@ -434,6 +434,9 @@ cord call --query "translate to english" --input '{"data":"hola"}'
 # 指定 peer + capability 直接拨
 cord call --peer-id <PEER_ID> --cap translator --input '{"data":"hola"}'
 
+# 已知 peer + capability 时，直接进入 sticky chat
+cord link <PEER_ID> translator
+
 # 多轮 —— 复用同一个 sessionId
 cord call --query "writing assistant" --input '{"topic":"agents"}' \
           --session-id my-draft
@@ -474,7 +477,8 @@ cord stop               # 关 daemon
 | `cord openclaw-bridge` | 把 OpenClaw 主 agent 包装成能力 |
 | `cord find` | 跨网络语义搜索 |
 | `cord call` | 调用远端能力（`--peer-id` + `--cap`，或 `--query`） |
-| `cord chat` | 交互式 REPL —— sticky / route / broadcast / roundtable 模式 |
+| `cord link <peer-id> <cap-id>` | 已知 peer/cap 时，直接进入 sticky chat |
+| `cord chat` | 终端聊天页：cap 列表、当前 cap、sticky / broadcast / roundtable 模式 |
 | `cord describe <cap-id>` | 拉取能力描述符（input/output schema、示例） |
 | `cord capabilities` | 列出本地已注册能力 + 每能力调用统计 |
 | `cord sessions` | 活跃的多轮会话 |
