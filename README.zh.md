@@ -54,53 +54,54 @@ agent、三个大洲、一张网 —— 而它们事先互不认识。
 
 ---
 
-## 开始用 —— 完整使用流程
-
-### Step 1. 安装
+## 开始用 —— 两条命令
 
 ```bash
-npm install -g @fosenai/cord
+npm install -g @fosenai/cord    # 1) 装
+cord                            # 2) 启动 —— 首次跑 wizard，之后直接进 REPL
 ```
 
-装一个 `cord` 命令，支持 macOS / Linux / Windows。postinstall 自动从
-GitHub Releases 拉对应平台的原生二进制。
+完事。首次跑 wizard：生成 owner 身份（BIP-39 助记词，存 `~/.cord/owner.json`），
+自动接公网 bootstrap，自动检测本机已装的 LLM CLI（codex / claude / ollama /
+gemini），让你选一个注册成第一个 agent。**之后每次** `cord` 都直接进 REPL。
 
-### Step 2. 初始化身份（一次性）
-
-```bash
-cord init
+```
+cord 0.1.0-alpha.8  peer 12D3KooW…XzJT
+  caps   codex, echo
+  api    http://127.0.0.1:7878
+> /help
 ```
 
-交互式向导，生成 BIP-39 助记词（12 词）并把 **owner key** 存到
-`~/.cord/owner.json`。这把 key 是网络上其他 peer 认你的依据 —— ACL 白名单
-（`allowedOwners`）就靠这个识别"是不是你的 agent"。**12 个词务必抄下来**，
-那是你的恢复短语。
+### REPL 命令（日常够用）
 
-之前在另一台机器初始化过？选 **2（从助记词恢复）**，粘贴 12 词 ——
-身份就跟你跨机器走。
+| 命令 | 干啥 |
+|---|---|
+| *（直接打字）* | 跟最近用的 cap 聊；首次自动用本机唯一的 cap |
+| `/agent ls` | 列本机已注册的 cap |
+| `/agent add codex` *(或 claude / ollama / deepseek / glm / kimi / …)* | 热加一个 bridge cap；写 `~/.cord/caps.json` 重启复活 |
+| `/agent add my-bot --cmd "python bot.py"` | 自定义 bridge |
+| `/agent rm <cap-id>` | 删一个 cap |
+| `/find <自然语言>` | 全网语义搜 |
+| `/use <cap-id>` | 设默认 cap（之后打字直接调它） |
+| `/peer ls` | 看连上谁 |
+| `/access <public\|friends\|private>` | 即时改 daemon 访问度，无需重启 |
+| `/trust add <ownerId>` | 加朋友白名单（friends 模式用） |
+| `/update` | 检查 npm + 一键升级到最新 |
+| `/status` | 刷新状态行 |
+| `/stop` | 停 daemon 并退出 |
+| `/exit` | 退 REPL（daemon 继续跑） |
 
-### Step 3. 起 daemon
+**身份 & 节点基础** 自动管：
 
-```bash
-# 最简形态 —— 只入网，先不发 agent
-cord start --bootstrap /ip4/seed.example.com/tcp/9000/p2p/<SEED_PEER_ID>
+- **owner key** 在 `~/.cord/owner.json`（BIP-39 助记词 —— 12 个词抄下来跨设备恢复用）.
+- **node key** 在 `~/.cord/node-key.json`（本机 Ed25519 keypair）—— 决定 `peerId`.
+  跨重启稳定，不再变；想换个 peerId 才删它.
 
-# 验证
-cord status
-cord whoami
-```
+### 发布 agent 的更多方式
 
-`cord start` 把 daemon 跑在后台，PID 写到 `~/.cord/cord.pid`。
-`cord stop` 关掉。
-
-或者你也可以一条命令同时"起 daemon + 发第一个 agent" —— 那是 Step 4 的
-`cord serve`。
-
-### Step 4. 发布一个 agent
-
-挑你手头**已经装的工具**。每条都是一条 `cord serve …`（或 `cord soul …`）
-命令 —— 同时起 daemon + 注册你的 agent。（如果 Step 3 已经 `cord start`
-了，下面命令里 `--bootstrap` 可省，复用正在跑的 daemon。）
+如果 `/agent add` 不够用（你想用 SOUL 文件、MCP server、HTTP backend、
+或精细 sandbox / ACL），独立子命令 `cord serve …` / `cord soul …` /
+`cord publish-mcp` / `cord publish-backend` 还在，用法不变：
 
 <details>
 <summary><b>🟣 Claude Code</b> —— 把你的 <code>claude</code> 订阅分享成网络 agent</summary>
@@ -296,7 +297,7 @@ allowedOwners:             # 或：所有被这个 owner key 签的 agent
 ```
 </details>
 
-### Step 5. 用网络上的 agent
+### 调用网络上的 agent
 
 #### 日常用法 —— `cord chat` 自动路由每一句
 
@@ -444,7 +445,7 @@ daemon 还有 HTTP API 在 `--api-port`，懒得 spawn CLI 直接 POST JSON 也�
 —— `cord info` 看可用路由。
 </details>
 
-### Step 6. 管理本机 daemon
+### REPL 之外管 daemon
 
 日常最常用：
 

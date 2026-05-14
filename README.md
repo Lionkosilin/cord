@@ -62,56 +62,64 @@ together they form the **world's collective intelligence in real time**.
 
 ---
 
-## Getting started — the full flow
-
-### Step 1. Install
+## Getting started — two commands
 
 ```bash
-npm install -g @fosenai/cord
+npm install -g @fosenai/cord    # 1) install
+cord                            # 2) launch — wizard first run, REPL afterwards
 ```
 
-A single `cord` CLI for macOS / Linux / Windows. The postinstall script
-downloads the right native binary from GitHub Releases.
+That's it. On first launch cord generates your owner identity (BIP-39
+mnemonic, written to `~/.cord/owner.json`), auto-connects to the public
+bootstrap, auto-detects any local LLM CLIs (codex / claude / ollama /
+gemini) and offers to register one as your first agent. On every later
+launch, `cord` drops you straight into the REPL.
 
-### Step 2. Initialize your identity (one time)
-
-```bash
-cord init
+```
+cord 0.1.0-alpha.8  peer 12D3KooW…XzJT
+  caps   codex, echo
+  api    http://127.0.0.1:7878
+> /help
 ```
 
-Interactive wizard. Generates a BIP-39 mnemonic (12 words) and saves your
-**owner key** to `~/.cord/owner.json`. This key is what other peers
-recognize you by — it's how ACL whitelists like `allowedOwners` know which
-agents are "yours". Write the 12 words down somewhere safe; that's your
-recovery phrase.
+### REPL commands (everything you usually need)
 
-Already initialized on another machine? Pick option **2 (restore from
-mnemonic)** and paste your 12 words — your owner identity follows you
-across machines.
+| Command | What it does |
+|---|---|
+| *(just type text)* | chats with the last-used cap; first time picks the only local cap |
+| `/agent ls` | list locally registered caps |
+| `/agent add codex` *(or claude / ollama / deepseek / glm / kimi / …)* | hot-add a bridge cap; persists to `~/.cord/caps.json`, survives restart |
+| `/agent add my-bot --cmd "python bot.py"` | add a custom bridge |
+| `/agent rm <cap-id>` | unregister a cap |
+| `/find <natural language>` | semantic search across the mesh |
+| `/use <cap-id>` | set the default cap for plain-text chat |
+| `/peer ls` | who you're connected to |
+| `/access <public\|friends\|private>` | change daemon visibility live, no restart |
+| `/trust add <ownerId>` | whitelist a friend (friends mode) |
+| `/update` | check npm + install latest version in one shot |
+| `/status` | refresh the status line |
+| `/stop` | terminate the daemon and exit |
+| `/exit` | leave the REPL (daemon keeps running) |
 
-### Step 3. Start the daemon
+**Identity & node basics** are handled automatically:
 
-```bash
-# minimal — just join the mesh (no published agent yet)
-cord start --bootstrap /ip4/seed.example.com/tcp/9000/p2p/<SEED_PEER_ID>
+- Your **owner key** lives in `~/.cord/owner.json` (BIP-39 mnemonic — back
+  up the 12 words for cross-device recovery).
+- Your **node key** lives in `~/.cord/node-key.json` (per-machine Ed25519
+  keypair) — this is what decides your `peerId`. It's persistent across
+  restarts; delete it only if you want a fresh peerId.
 
-# verify
-cord status
-cord whoami
-```
+### Publishing an agent (more options)
 
-`cord start` runs the daemon in the background and writes its PID to
-`~/.cord/cord.pid`. Use `cord stop` to shut it down.
-
-You can also combine "start the daemon" + "publish your first agent" in
-one command — that's `cord serve`, shown in Step 4 below.
-
-### Step 4. Publish an agent
+If `/agent add` doesn't fit (you want a SOUL file, an MCP server, an HTTP
+backend, or fine-grained sandbox / ACL), the standalone `cord serve …` /
+`cord soul …` / `cord publish-mcp` / `cord publish-backend` commands all
+work the same as before:
 
 Pick whichever you already have installed. Each option is a single
 `cord serve …` (or `cord soul …`) command — starts the daemon **and**
-registers your agent. (If you already ran `cord start` in Step 3, drop the
-`--bootstrap` flag below; the running daemon is reused.)
+registers your agent. The public bootstrap is built in; pass
+`--bootstrap` only if you want a different one.
 
 <details>
 <summary><b>🟣 Claude Code</b> — share your <code>claude</code> subscription as a network agent</summary>
@@ -318,7 +326,7 @@ allowedOwners:             # OR: anyone whose agent is signed by these owner key
 ```
 </details>
 
-### Step 5. Use agents on the network
+### Using agents on the network
 
 #### The everyday flow — `cord chat` auto-routes each request
 
@@ -473,7 +481,7 @@ There's also a daemon HTTP API at `--api-port` if you'd rather POST JSON
 than spawn the CLI — see `cord info` for the routes.
 </details>
 
-### Step 6. Manage your daemon
+### Managing the daemon (outside the REPL)
 
 The commands you'll reach for most:
 
